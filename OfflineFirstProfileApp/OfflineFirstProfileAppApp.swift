@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct OfflineFirstProfileAppApp: App {
-    let persistenceController = PersistenceController.shared
+    let persistenceController = CoreDataStack.shared
 
     var body: some Scene {
         WindowGroup {
