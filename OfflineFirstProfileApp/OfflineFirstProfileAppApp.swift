@@ -9,12 +9,16 @@ import SwiftUI
 
 @main
 struct OfflineFirstProfileAppApp: App {
-    let persistenceController = CoreDataStack.shared
+    let coreDataStack = CoreDataStack.shared
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            let repo = CoreDataProfileRepo(
+                context: coreDataStack.container.viewContext
+            )
+            let useCase = ProfileUseCase(repo: repo)
+            let profileViewModel = ProfileViewModel(useCase: useCase)
+            ProfileView(viewModel: profileViewModel)
         }
     }
 }
