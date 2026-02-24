@@ -17,6 +17,8 @@ class ProfileViewModel: ObservableObject {
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
     
+    private var profileId: UUID?
+    
     private let useCase: ProfileUseCase
     
     init(useCase: ProfileUseCase) {
@@ -26,6 +28,7 @@ class ProfileViewModel: ObservableObject {
     func getProfile() {
         do {
             if let profile = try useCase.fetchProfile() {
+                profileId = profile.id
                 name = profile.name
                 phoneNumber = profile.phoneNumber
                 email = profile.email
@@ -39,8 +42,9 @@ class ProfileViewModel: ObservableObject {
     }
     
     func saveProfile() {
+        let currentProfileId = profileId ?? UUID()
         let profile = Profile(
-            id: UUID(),
+            id: currentProfileId,
             name: name,
             phoneNumber: phoneNumber,
             email: email,
