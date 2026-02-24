@@ -13,11 +13,11 @@ struct ProfileUseCase {
         self.repo = repo
     }
     
-    func fetchProfile() throws -> Profile? {
-        try repo.fetchProfile()
+    func fetchProfile() async throws -> Profile? {
+        try await repo.fetchProfile()
     }
     
-    func saveProfile(profile: Profile) throws {
+    func saveProfile(profile: Profile) async throws {
         
         let updatedProfile = Profile(
             id: profile.id,
@@ -31,7 +31,7 @@ struct ProfileUseCase {
             isSynced: false
         )
         
-        try repo.saveProfile(profile: updatedProfile)
+        try await repo.saveProfile(profile: updatedProfile)
     }
 
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+@MainActor
 class ProfileViewModel: ObservableObject {
     
     @Published var name: String = ""
@@ -25,9 +26,9 @@ class ProfileViewModel: ObservableObject {
         self.useCase = useCase
     }
     
-    func getProfile() {
+    func getProfile() async {
         do {
-            if let profile = try useCase.fetchProfile() {
+            if let profile = try await useCase.fetchProfile() {
                 profileId = profile.id
                 name = profile.name
                 phoneNumber = profile.phoneNumber
@@ -41,7 +42,7 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    func saveProfile() {
+    func saveProfile() async {
         let currentProfileId = profileId ?? UUID()
         let profile = Profile(
             id: currentProfileId,
@@ -56,7 +57,7 @@ class ProfileViewModel: ObservableObject {
         )
         
         do {
-            try useCase.saveProfile(profile: profile)
+            try await useCase.saveProfile(profile: profile)
             alertMessage = "Profile saved successfully"
             showAlert = true
         } catch {

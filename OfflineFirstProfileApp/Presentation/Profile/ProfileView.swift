@@ -34,7 +34,9 @@ struct ProfileView: View {
                     }
                     
                     Button(action: {
-                        profileViewModel.saveProfile()
+                        Task {
+                            await profileViewModel.saveProfile()
+                        }
                     }) {
                         Text("Save")
                             .frame(maxWidth: .infinity)
@@ -50,7 +52,9 @@ struct ProfileView: View {
             .navigationBarHidden(true)
         }
         .onAppear {
-            profileViewModel.getProfile()
+            Task {
+               await profileViewModel.getProfile()
+            }
         }
         .alert(profileViewModel.alertMessage, isPresented: $profileViewModel.showAlert) {
             Button("OK", role: .cancel) {}

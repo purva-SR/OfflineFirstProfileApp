@@ -7,6 +7,8 @@
 
 import Foundation
 protocol ProfileRepo {
-    func fetchProfile() throws -> Profile?
-    func saveProfile(profile: Profile) throws
+    func fetchProfile() async throws -> Profile?
+    func saveProfile(profile: Profile) async throws
+    func fetchUnsyncedProfiles() async throws -> [Profile]
+    func makeProfileAsSynced(id: UUID) async throws
 }
