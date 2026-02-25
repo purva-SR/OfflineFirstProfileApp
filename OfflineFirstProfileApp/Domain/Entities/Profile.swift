@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct Profile {
+struct Profile: Codable {
     let id: UUID
     let name: String
     let phoneNumber: String

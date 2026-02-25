@@ -14,7 +14,7 @@ struct ProfileView: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("Profile Details")
@@ -27,7 +27,7 @@ struct ProfileView: View {
                             .keyboardType(.phonePad)
                         customTextField("Email", text: $profileViewModel.email)
                             .keyboardType(.emailAddress)
-                            .autocapitalization(.none)
+                            .textInputAutocapitalization(.never)
                         customTextField("Address", text: $profileViewModel.address)
                         customTextField("Pincode", text: $profileViewModel.pincode)
                             .keyboardType(.numberPad)
@@ -47,9 +47,10 @@ struct ProfileView: View {
                     }
                     .padding(.top, 20)
                 }
+
                 .padding(20)
             }
-            .navigationBarHidden(true)
+            .scrollDismissesKeyboard(.interactively)
         }
         .onAppear {
             Task {
@@ -63,12 +64,11 @@ struct ProfileView: View {
     
     private func customTextField(_ title: String,
                                  text: Binding<String>) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            TextField("\(title)", text: text)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(8)
-        }
+        TextField(title, text: text)
+            .disableAutocorrection(true)
+            .padding()
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(8)
     }
 }
 

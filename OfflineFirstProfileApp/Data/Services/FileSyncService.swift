@@ -11,16 +11,9 @@ class FileSyncService {
     func sync(profile: Profile) throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
+        encoder.dateEncodingStrategy = .iso8601
         
-        let data = try encoder.encode([
-            "id": profile.id.uuidString,
-            "name": profile.name,
-            "phone_number": profile.phoneNumber,
-            "email": profile.email,
-            "address": profile.address,
-            "pincode": profile.pincode,
-            "shipping_address": profile.shippingAddress
-        ])
+        let data = try encoder.encode(profile)
         
         let url = FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)[0]

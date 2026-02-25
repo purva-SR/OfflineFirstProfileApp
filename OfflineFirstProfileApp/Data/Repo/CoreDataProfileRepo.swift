@@ -38,6 +38,7 @@ final class CoreDataProfileRepo: ProfileRepo {
     
     func saveProfile(profile: Profile) throws {
         let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", profile.id as CVarArg)
         request.fetchLimit = 1
         let currentProfile = try context.fetch(request).first
         

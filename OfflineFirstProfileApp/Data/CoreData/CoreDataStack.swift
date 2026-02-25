@@ -28,6 +28,6 @@ final class CoreDataStack {
                 fatalError("Core Data load error: \(error), \(error.userInfo)")
             }
         }
-        container.viewContext.automaticallyMergesChangesFromParent = true
+        viewContext.automaticallyMergesChangesFromParent = true
     }
 }

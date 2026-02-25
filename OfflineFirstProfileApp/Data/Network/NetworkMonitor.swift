@@ -9,15 +9,22 @@ import Foundation
 import Network
 import Combine
 
-final class NetworkMonitor {
+final class NetworkMonitor: ObservableObject {
+
+    static let shared = NetworkMonitor()
     private let monitor = NWPathMonitor()
-    private let queue = DispatchQueue(label: "NetworkMonitor")
-    
-    let statusPublisher = PassthroughSubject<Bool, Never>()
+    private let queue = DispatchQueue(label: "NetworkMonitorQueue")
+
+    @Published private(set) var isOnline: Bool = false
+
+    private init() {}
     
     func startMonitoring() {
         monitor.pathUpdateHandler = { [weak self] path in
-            self?.statusPublisher.send(path.status == .satisfied)
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.isOnline = (path.status == .satisfied)
+            }
         }
         monitor.start(queue: queue)
     }
