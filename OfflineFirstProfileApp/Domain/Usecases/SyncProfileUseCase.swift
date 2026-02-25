@@ -20,7 +20,18 @@ struct SyncProfileUseCase {
         let unsyncedProfiles = try await repo.fetchUnsyncedProfiles()
         
         for profile in unsyncedProfiles {
-            try syncService.sync(profile: profile)
+            let updatedProfile = Profile(
+                id: profile.id,
+                name: profile.name,
+                phoneNumber: profile.phoneNumber,
+                email: profile.email,
+                address: profile.address,
+                pincode: profile.pincode,
+                shippingAddress: profile.shippingAddress,
+                updatedAt: profile.updatedAt,
+                isSynced: true
+            )
+            try syncService.sync(profile: updatedProfile)
             try await repo.makeProfileAsSynced(id: profile.id)
         }
     }

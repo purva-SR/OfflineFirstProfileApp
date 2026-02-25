@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import Combine
+
 @MainActor
 class ProfileViewModel: ObservableObject {
     
@@ -22,9 +24,22 @@ class ProfileViewModel: ObservableObject {
     
     private let useCase: ProfileUseCase
     
+    private var cancellables = Set<AnyCancellable>()
+    
     init(useCase: ProfileUseCase) {
         self.useCase = useCase
+        observeAutoSync()
     }
+    
+    private func observeAutoSync() {
+          SyncManager.shared.syncCompleted
+              .receive(on: DispatchQueue.main)
+              .sink { [weak self] in
+                  self?.alertMessage = "Profile synced successfully"
+                  self?.showAlert = true
+              }
+              .store(in: &cancellables)
+      }
     
     func getProfile() async {
         do {
@@ -60,6 +75,7 @@ class ProfileViewModel: ObservableObject {
             try await useCase.saveProfile(profile: profile)
             alertMessage = "Profile saved successfully"
             showAlert = true
+            await SyncManager.shared.triggerSyncIfNeeded()
         } catch {
             alertMessage = "Failed to save profile"
             showAlert = true
