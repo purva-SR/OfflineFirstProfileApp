@@ -76,6 +76,9 @@ class ProfileViewModel: ObservableObject {
             alertMessage = "Profile saved successfully"
             showAlert = true
             await SyncManager.shared.triggerSyncIfNeeded()
+        } catch let error as ValidationError {
+            alertMessage = error.localizedDescription
+            showAlert = true
         } catch {
             alertMessage = "Failed to save profile"
             showAlert = true
