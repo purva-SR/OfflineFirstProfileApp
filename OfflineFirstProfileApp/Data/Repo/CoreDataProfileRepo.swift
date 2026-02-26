@@ -16,45 +16,50 @@ final class CoreDataProfileRepo: ProfileRepo {
         self.context = context
     }
     
-    func fetchProfile() throws -> Profile? {
-        let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
-        request.fetchLimit = 1
-        let result = try context.fetch(request).first
-        
-        guard let entity = result else { return nil }
-        
-        return Profile(
-            id: entity.id ?? UUID(),
-            name: entity.name ?? "",
-            phoneNumber: entity.phoneNumber ?? "",
-            email: entity.email ?? "",
-            address: entity.address ?? "",
-            pincode: entity.pincode ?? "",
-            shippingAddress: entity.shippingAddress ?? "",
-            updatedAt: entity.updatedAt,
-            isSynced: entity.isSynced
-        )
+    func fetchProfile() async throws -> Profile? {
+        try await context.perform {
+            let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
+            request.fetchLimit = 1
+            
+            guard let entity = try self.context.fetch(request).first else {
+                return nil
+            }
+            
+            return Profile(
+                id: entity.id ?? UUID(),
+                name: entity.name ?? "",
+                phoneNumber: entity.phoneNumber ?? "",
+                email: entity.email ?? "",
+                address: entity.address ?? "",
+                pincode: entity.pincode ?? "",
+                shippingAddress: entity.shippingAddress ?? "",
+                updatedAt: entity.updatedAt,
+                isSynced: entity.isSynced
+            )
+        }
     }
-    
-    func saveProfile(profile: Profile) throws {
-        let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", profile.id as CVarArg)
-        request.fetchLimit = 1
-        let currentProfile = try context.fetch(request).first
         
-        let entity = currentProfile ?? ProfileEntity(context: context)
-        entity.id = profile.id
-        entity.name = profile.name
-        entity.phoneNumber = profile.phoneNumber
-        entity.email = profile.email
-        entity.address = profile.address
-        entity.pincode = profile.pincode
-        entity.shippingAddress = profile.shippingAddress
-        entity.updatedAt = Date()
-        entity.isSynced = profile.isSynced
-        
-        try context.save()
-
+    func saveProfile(profile: Profile) async throws {
+        try await context.perform {
+            let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "id == %@", profile.id as CVarArg)
+            request.fetchLimit = 1
+            
+            let existing = try self.context.fetch(request).first
+            let entity = existing ?? ProfileEntity(context: self.context)
+            
+            entity.id = profile.id
+            entity.name = profile.name
+            entity.phoneNumber = profile.phoneNumber
+            entity.email = profile.email
+            entity.address = profile.address
+            entity.pincode = profile.pincode
+            entity.shippingAddress = profile.shippingAddress
+            entity.updatedAt = profile.updatedAt
+            entity.isSynced = profile.isSynced
+            
+            try self.context.save()
+        }
     }
     
     func fetchUnsyncedProfiles() async throws -> [Profile] {
