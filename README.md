@@ -20,24 +20,31 @@ The app allows users to edit and save profile data locally when offline, and aut
 ## 🏗 Architecture
 
 The project follows **Clean Architecture** with clear separation of concerns:
-Presentation
-├── ProfileView (SwiftUI)
-└── ProfileViewModel
-
-Domain
-├── Entities (Profile)
-├── Repository Protocol
-├── UseCases (ProfileUseCase, SyncProfileUseCase)
-└── Validation Logic
-
-Data
-├── CoreDataStack
-├── NetworkMonitor
-├── CoreDataProfileRepo
-└── FileSyncService
-
-Application
-└── SyncManager (auto-sync coordination)
+```text
+OfflineFirstProfileApp
+│
+├── Presentation
+│   ├── ProfileView (SwiftUI)
+│   └── ProfileViewModel
+│
+├── Domain
+│   ├── Entities
+│   │   └── Profile
+│   ├── Repository Protocol (ProfileRepo)
+│   ├── UseCases
+│   │   ├── ProfileUseCase
+│   │   └── SyncProfileUseCase
+│   └── Validation
+│
+├── Data
+│   ├── CoreDataStack
+│   ├── CoreDataProfileRepo
+│   ├── NetworkMonitor
+│   └── FileSyncService
+│
+└── Application
+    └── SyncManager
+```
 
 
 ### Flow
