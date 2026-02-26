@@ -59,6 +59,9 @@ class ProfileViewModel: ObservableObject {
             try useCase.saveProfile(profile: profile)
             alertMessage = "Profile saved successfully"
             showAlert = true
+        } catch let error as ValidationError {
+            alertMessage = error.localizedDescription
+            showAlert = true
         } catch {
             alertMessage = "Failed to save profile"
             showAlert = true
